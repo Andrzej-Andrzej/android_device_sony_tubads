@@ -1,0 +1,14 @@
+[
+  {
+    "remote": "tubads",
+    "repository": "rrvuhpg/android_vendor_sony_tubads",
+    "target_path": "vendor/sony/tubads",
+    "branch": "master"
+  },
+  {
+    "remote": "tubads",
+    "repository": "rrvuhpg/android_kernel_sony_tubads",
+    "target_path": "kernel/sony/tubads",
+    "branch": "master"
+  }
+] 

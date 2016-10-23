@@ -1,0 +1,91 @@
+squall@squall:~/android/system/device/sony/tubads$ adb shell su -c "ls -l /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/"
+
+Qnovo -> /dev/block/mmcblk0p33
+apps_log -> /dev/block/mmcblk0p29
+boot -> /dev/block/mmcblk0p23
+cache -> /dev/block/mmcblk0p32
+diag -> /dev/block/mmcblk0p30
+expdb -> /dev/block/mmcblk0p7
+flashinfo -> /dev/block/mmcblk0p36
+fotakernel -> /dev/block/mmcblk0p5
+frp -> /dev/block/mmcblk0p8
+keystore -> /dev/block/mmcblk0p28
+lk -> /dev/block/mmcblk0p21
+lk2 -> /dev/block/mmcblk0p22
+logo -> /dev/block/mmcblk0p24
+ltalabel -> /dev/block/mmcblk0p4
+md1arm7 -> /dev/block/mmcblk0p18
+md1dsp -> /dev/block/mmcblk0p17
+md1img -> /dev/block/mmcblk0p16
+md3img -> /dev/block/mmcblk0p19
+metadata -> /dev/block/mmcblk0p11
+nvdata -> /dev/block/mmcblk0p10
+nvram -> /dev/block/mmcblk0p20
+oem -> /dev/block/mmcblk0p31
+oemkeystore -> /dev/block/mmcblk0p14
+para -> /dev/block/mmcblk0p6
+persist -> /dev/block/mmcblk0p12
+ppl -> /dev/block/mmcblk0p9
+proinfo -> /dev/block/mmcblk0p15
+protect1 -> /dev/block/mmcblk0p2
+protect2 -> /dev/block/mmcblk0p3
+seccfg -> /dev/block/mmcblk0p13
+secro -> /dev/block/mmcblk0p27
+system -> /dev/block/mmcblk0p35
+ta -> /dev/block/mmcblk0p1
+tee1 -> /dev/block/mmcblk0p25
+tee2 -> /dev/block/mmcblk0p26
+userdata -> /dev/block/mmcblk0p34
+
+squall@squall:~/android/system/device/sony/tubads$ adb shell cat /proc/partitions
+major minor  #blocks  name
+
+   7        0       1732 loop0
+   7        1     313644 loop1
+   7        2      98304 loop2
+ 254        0    1024000 zram0
+ 179        0   15267840 mmcblk0
+ 179        1       2048 mmcblk0p1
+ 179        2      10240 mmcblk0p2
+ 179        3      11776 mmcblk0p3
+ 179        4      16384 mmcblk0p4
+ 179        5      40960 mmcblk0p5
+ 179        6        512 mmcblk0p6
+ 179        7      10240 mmcblk0p7
+ 179        8       1024 mmcblk0p8
+ 179        9        256 mmcblk0p9
+ 179       10      32768 mmcblk0p10
+ 179       11      32768 mmcblk0p11
+ 179       12       4352 mmcblk0p12
+ 179       13        256 mmcblk0p13
+ 179       14       8192 mmcblk0p14
+ 179       15       3072 mmcblk0p15
+ 179       16      24576 mmcblk0p16
+ 179       17       4864 mmcblk0p17
+ 179       18       4096 mmcblk0p18
+ 179       19       5120 mmcblk0p19
+ 179       20       5120 mmcblk0p20
+ 179       21       1024 mmcblk0p21
+ 179       22       1024 mmcblk0p22
+ 179       23      40960 mmcblk0p23
+ 179       24       8192 mmcblk0p24
+ 179       25       5120 mmcblk0p25
+ 179       26       5120 mmcblk0p26
+ 179       27       6144 mmcblk0p27
+ 179       28       8192 mmcblk0p28
+ 179       29      16384 mmcblk0p29
+ 179       30      16384 mmcblk0p30
+ 179       31     303104 mmcblk0p31
+ 259        0     204800 mmcblk0p32
+ 259        1      24576 mmcblk0p33
+ 259        2   10862592 mmcblk0p34
+ 259        3    3522560 mmcblk0p35
+ 259        4      16384 mmcblk0p36
+ 179       96       4096 mmcblk0rpmb
+ 179       64       4096 mmcblk0boot1
+ 179       32       4096 mmcblk0boot0
+ 179      128   62367744 mmcblk1
+ 179      129      16384 mmcblk1p1
+ 179      130   62350319 mmcblk1p2
+ 253        0   62350319 dm-0
+
