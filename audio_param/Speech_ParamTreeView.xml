@@ -147,7 +147,7 @@
 				<Category path=""/>
 			</CategoryPathList>
 		</Feature>
-
+		
 		<Feature name="RX Digital Gain">
 			<FieldList>
 				<Field audio_type="Speech" param="speech_mode_para" name="DL Digital Gain"/>
@@ -156,7 +156,7 @@
 				<Category path=""/>
 			</CategoryPathList>
 		</Feature>
-
+		
 		<Feature name="MagiLoudness/MagiClarity">
 			<FieldList>
 				<Field audio_type="Speech" param="speech_mode_para" name="MagiClarity DM/SM"/>
@@ -164,7 +164,7 @@
                 <Field audio_type="Speech" param="speech_mode_para" name="MagiClarity Shape filter triggered by babble noise"/>
                 <Field audio_type="Speech" param="speech_mode_para" name="MagiClarity Shape filter triggered by LF noise"/>
                 <Field audio_type="Speech" param="speech_mode_para" name="MagiClarity on/off"/>
-
+                
                 <Field audio_type="Speech" param="speech_mode_para" name="MagiClarity Thd1"/>
                 <Field audio_type="Speech" param="speech_mode_para" name="MagiClarity Thd2"/>
                 <Field audio_type="Speech" param="speech_mode_para" name="MagiClarity release rate"/>

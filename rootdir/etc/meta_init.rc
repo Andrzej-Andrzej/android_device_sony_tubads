@@ -11,6 +11,7 @@ import meta_init.project.rc
 #Make sure meta_init.modem.rc is the last rc file.
 import meta_init.modem.rc
 import init.microtrust.rc
+import init.sony-trimarea.rc
 
 on early-init
     # Set init and its forked children's oom_adj.
@@ -21,13 +22,9 @@ on early-init
 
     start ueventd
 
-#INTERNAL_START
-    mount debugfs debugfs /sys/kernel/debug
-    chmod 0755 /sys/kernel/debug
-#INTERNAL_END
-
 on init
     sysclktz 0
+    chmod 0666 /dev/kmsg
 
 loglevel 5
     write /proc/bootprof "INIT: on init start"
@@ -91,8 +88,6 @@ loglevel 5
 #INTERNAL_START
     mkdir /protect_f 0771 system system
     mkdir /protect_s 0771 system system
-    #create mountpoint for persist partition
-    mkdir /persist 0771 system system
     #Create nvdata mount point
     mkdir /nvdata 0771 system system
 
@@ -104,13 +99,6 @@ loglevel 5
     write /d/mtkfb enable_idlemgr:0
 #INTERNAL_END
 
-	#agold shipeilong add for persdata start[20151217] 
-    mkdir /persdata 0750 system system 
-    mkdir /persdata/fingerprint 0750 system system
-
-    # if SE linux is enabled, this command is also required 
-    # restorecon_recursive /persdata/fingerprint
-	#agold shipeilong add end
 
 # Healthd can trigger a full boot from charger mode by signaling this
 # property when the power button is held.
@@ -185,18 +173,8 @@ on post-fs
     chown system system /protect_s
     chmod 0770 /protect_s
 
-    chown system system /persist
-    chmod 0770 /persist
-
 #INTERNAL_END
     
-	#agold shipeilong add for persdata start[20151217] 
-    chown system system /persdata/fingerprint
-    chmod 0750 /persdata/fingerprint
-
-    # if SE linux is enabled, this command is also required 
-    restorecon_recursive /persdata/fingerprint
-	#agold shipeilong add end
 
 on post-fs-data
     # We chown/chmod /data again so because mount is run as root + defaults
@@ -410,6 +388,9 @@ service console /system/bin/sh
     user shell
     seclabel u:r:shell:s0
 
+service fuelgauged /system/bin/fuelgauged
+    class main
+
 on property:ro.debuggable=1
     start console
 
@@ -472,6 +453,13 @@ service nvram_daemon /system/bin/nvram_daemon
     group system
     oneshot
 
+#CEI comments start
+#Add NVRAM
+service nvram_write /system/bin/nvram_write
+    class main
+    user root
+    oneshot
+#CEI comments end
 
 service mobile_log_d /system/bin/mobile_log_d
     class main

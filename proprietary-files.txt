@@ -722,7 +722,7 @@ lib64/libeffects.so
 /lib/libvt_avsync.so
 /lib/libvt_custom.so
 /lib/libvt_socketbind.so
-/lib/libwfo_jni.so
+#/lib/libwfo_jni.so
 /lib/lib_asb_tee.so
 /lib/sensors.mediatek.so
 /lib/sensors.smd.so
@@ -848,7 +848,7 @@ lib64/libeffects.so
 /lib64/libvtmal.so
 /lib64/libvt_avsync.so
 /lib64/libvt_socketbind.so
-/lib64/libwfo_jni.so
+#/lib64/libwfo_jni.so
 /lib64/lib_asb_tee.so
 /lib64/sensors.mediatek.so
 /lib64/sensors.smd.so

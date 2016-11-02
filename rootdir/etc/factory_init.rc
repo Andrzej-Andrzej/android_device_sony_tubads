@@ -2,6 +2,7 @@ import /init.environ.rc
 import init.fon.rc
 import init.trustonic.rc
 import init.microtrust.rc
+import init.sony-trimarea.rc
 
 on early-init
     # Set init and its forked children's oom_adj.
@@ -15,6 +16,7 @@ on early-init
     write /proc/bootprof "INIT: usr/eng build setting"
 
 on init
+    chmod 0666 /dev/kmsg
 
 sysclktz 0
 
@@ -36,8 +38,6 @@ loglevel 5
     mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
-    #create mountpoint for persist partition
-    mkdir /persist 0771 system system
 #Create nvdata mount point
     mkdir /nvdata 0771 system system
 # Mount staging areas for devices managed by vold
@@ -104,14 +104,6 @@ loglevel 5
     trigger early-boot
     trigger boot
 
-	#agold shipeilong add for persdata start[20151217] 
-    mkdir /persdata 0750 system system 
-    mkdir /persdata/fingerprint 0750 system system
-
-    # if SE linux is enabled, this command is also required 
-    # restorecon_recursive /persdata/fingerprint
-	#agold shipeilong add end
-
 on fs
 #INTERNAL_START
     write /proc/bootprof "INIT:Mount_START"
@@ -171,17 +163,7 @@ on post-fs
     chmod 0770 /protect_s
 #INTERNAL_END
 
-	#agold shipeilong add for persdata start[20151217] 
-    chown system system /persdata/fingerprint
-    chmod 0750 /persdata/fingerprint
-
-    # if SE linux is enabled, this command is also required 
-    restorecon_recursive /persdata/fingerprint
-	#agold shipeilong add end
-
 on post-fs-data
-	#Thermal	
-	mkdir /data/.tp/ 0775 system system
 
     # We chown/chmod /data again so because mount is run as root + defaults
     chown system system /system/data
@@ -206,8 +188,6 @@ on post-fs-data
     start vold
     installkey /data
 
-    chown system system /persist
-    chmod 0771 /persist
 # create basic filesystem structure
     #mkdir /data/nvram 2770 root system
     # We chown/chmod /nvdata again so because mount is run as root + defaults
@@ -489,6 +469,9 @@ service console /system/bin/sh
     user shell
     seclabel u:r:shell:s0
 
+service fuelgauged /system/bin/fuelgauged
+    class main
+
 on property:sys.powerctl=*
     powerctl ${sys.powerctl}
 
@@ -586,6 +569,19 @@ service nvram_daemon /system/bin/nvram_daemon
     user root
     group system
     oneshot
+
+service nvram_write /system/bin/pl_nvram_write
+    class main
+    user root
+    oneshot
+
+#CEI comments start
+#Add NVRAM
+service nvram_write /system/bin/nvram_write
+    class main
+    user root
+    oneshot
+#CEI comments end
 
 service mdlogger /system/bin/mdlogger
     class main

@@ -17,7 +17,6 @@
 			<Category name="Handset" wording="Receiver" alias="RCV,SPK"/>
 			<Category name="Headset" wording="Headset" alias="HS,3-pole HS,4-pole HS"/>
 			<Category name="HS5POLE" wording="Headset(5-pole)" alias="5-pole HS"/>
-			<Category name="HS5POLE_ANC" wording="Headset(5-pole+ANC)" alias="5-pole HS+ANC"/>
 		</CategoryType>
 	</CategoryTypeList>
 	<ParamUnit>

@@ -13,12 +13,19 @@ import init.trustonic.rc
 import init.zygote_on_demand.rc
 import init.common_svc.rc
 import init.microtrust.rc
+import init.sony-mtbf.rc
 import init.chiptest.rc
+import init.sony-trimarea.rc
+import init.sony-bootstrap.rc
+import init.sony-security.rc
+import init.sony-fota.rc
+import init.qns.rc
 # init.modem.rc must be the LAST rc file because vold.post_fs_data_done is set in it
 import init.modem.rc
 # *** DO NOT import the new rc file after this line ***
 
 on early-init
+    mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
 
 on init
@@ -31,8 +38,6 @@ on init
 # Temp Backward compatibility
     mkdir /protect_f 0771 system system
     mkdir /protect_s 0771 system system
-    #create mountpoint for persist partition
-    mkdir /persist 0771 system system
 #Create nvdata mount point
     mkdir /nvdata 0771 system system
 # Create CIP mount point
@@ -40,25 +45,32 @@ on init
 
     mkdir /mnt/cd-rom 0000 system system
 
-#add by silead [AGOLD][Fengjun][2015.08.11]
-    mkdir /mnt/silead/ 0777 shell shell
-    mkdir /mnt/silead/tmp 0777 shell shell
-    mount tmpfs tmpfs /mnt/silead/tmp mode=0777,gid = 1000
-    write /mnt/silead/tmp/stub.txt ready
-    chmod 777 /mnt/silead/tmp/stub.txt
-#add by silead end [AGOLD]End
-
 # change lk_env permission
     chown root system /proc/lk_env
     chmod 0660 /proc/lk_env
     chmod 0666 /dev/kmsg
 
+# mount different fs end
+    mkdir /lta-label 0555 system system
+    wait /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/ltalabel
+    chown system system /lta-label
+    chmod 0555 /lta-label
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/ltalabel /lta-label nosuid nodev noatime noexec ro barrier=0 context=u:object_r:lta_label:s0
+    # mount oem
+    wait /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/oem
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/oem /oem ro barrier=1
+    
 # increase sysctl_rmem_max and sysctl_wmem_max values to 2M
     write /proc/sys/net/core/wmem_max 2097152
     write /proc/sys/net/core/rmem_max 2097152
 
 # mount different fs start
 
+# for ALS/PS sensor permission
+	chown system system /sys/ps/link/driver/enable
+	chown system system /sys/als/link/driver/enable
+	chown system system /sys/als/link/driver/delay
+	chown system system /sys/ps/link/driver/cali
 on property:persist.mediatek.fg.disable=1
     write /sys/devices/platform/battery_meter/FG_daemon_disable 1
 
@@ -70,6 +82,26 @@ on property:persist.mediatek.fg.log.enable=1
 
 on charger
     mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/system /system ro wait
+    #mount Qnovo
+    mkdir /qns 0750 qns qns
+    wait /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/Qnovo
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/Qnovo /qns nosuid nodev noatime noexec barrier=0 discard
+    chown qns qns /qns
+    chmod 0750 /qns
+    restorecon_recursive /qns
+    chown qns qns /sys/class/qns
+    chown qns qns /sys/class/qns/alarm
+    chown qns qns /sys/class/qns/battery_type
+    chown qns qns /sys/class/qns/charge_current
+    chown qns qns /sys/class/qns/charging_state
+    chown qns qns /sys/class/qns/current_now
+    chown qns qns /sys/class/qns/design
+    chown qns qns /sys/class/qns/fcc
+    chown qns qns /sys/class/qns/options
+    chown qns qns /sys/class/qns/soc
+    chown qns qns /sys/class/qns/temp
+    chown qns qns /sys/class/qns/voltage
+    start qns
     start spm_script
 		chmod 0666 /dev/kmsg
 		write /sys/devices/platform/battery_meter/FG_daemon_log_level 7
@@ -77,15 +109,58 @@ on charger
     start kpoc_charger
     start servicemanager
 
+# CEI comments start
+# Prevent swelling
+on property:persist.service.battery.charge=0
+    write /sys/class/power_supply/battery/enable_llk 0
+
+on property:persist.service.battery.charge=1
+    write /sys/class/power_supply/battery/enable_llk 1
+# CEI comments end
+
 on fs
     write /proc/bootprof "INIT:Mount_START"
     mount_all /fstab.mt6755
+
+    # mount diag
+    mkdir /idd 0751 idd idd
+    wait /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/diag
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/diag /idd nosuid nodev noatime noexec barrier=0 discard
+    chown idd idd /idd
+    chmod 0751 /idd
+    ONLY_IN_VARIANT(user, exec /system/bin/rm -r /idd/lost+found)
+    symlink /idd /mnt/idd
+
+    # mount apps_log
+    mkdir /rca 0750 idd idd
+    wait /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/apps_log
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/apps_log /rca nosuid nodev noatime noexec barrier=0 discard
+    chown idd idd /rca
+    chmod 0750 /rca
+    ONLY_IN_VARIANT(user, exec /system/bin/rm -r /rca/lost+found)
+    symlink /rca /mnt/rca
+
     exec /system/bin/tune2fs -O has_journal -u 10010 -r 4096 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/userdata
     write /proc/bootprof "INIT:Mount_END"
+    insmod /system/lib/modules/texfat.ko
+
+    #mount Qnovo
+    mkdir /qns 0750 qns qns
+    wait /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/Qnovo
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/Qnovo /qns nosuid nodev noatime noexec barrier=0 discard
+    chown qns qns /qns
+    chmod 0750 /qns
+    restorecon_recursive /qns
 
 on fs
 
-   mount iso9660 loop@/system/etc/iAmCdRom.iso /mnt/cd-rom ro
+   mount iso9660 loop@/system/etc/dop.iso /mnt/cd-rom ro
+
+#BSP-Mount_sqsh_Partition-01 +]
+    # mount system/odex.system.sqsh
+    wait /system/odex.system.sqsh
+    mount squashfs loop@/system/odex.system.sqsh /system/odex.system ro
+#BSP-Mount_sqsh_Partition-01 +]
 
 on post-fs
     # Support legacy paths
@@ -120,10 +195,6 @@ on post-fs
 on post-fs-data
 
 
-
-    chown system system /persist
-    chmod 0771 /persist
-
     # create basic filesystem structure
     # mkdir /data/nvram 2770 root system
     # We chown/chmod /nvdata again so because mount is run as root + defaults
@@ -131,14 +202,6 @@ on post-fs-data
     chmod 0771 /nvdata
     symlink /nvdata /data/nvram
     mkdir /nvdata/media 0771 media audio
-	
-	#agold shipeilong add for factory ATA test then normal boot fail
-	chown media /data/nvram/media/AUDIO_FUNC_SWITCH_Param
-	chgrp audio /data/nvram/media/AUDIO_FUNC_SWITCH_Param
-
-	chown media /data/nvram/media/CAMERA_VERSION
-	chgrp audio /data/nvram/media/CAMERA_VERSION
-	#agold shipeilong add end
 
     # Set SELinux security contexts on upgrade or policy update.
     restorecon_recursive /nvdata
@@ -158,10 +221,22 @@ on post-fs-data
     mkdir /data/misc/gps 0770 gps system
     mkdir /data/mpe_mnl 0771 gps system
     chown gps system /data/mpe_mnl
-    chmod 0775 /system/xbin/MPED
+    chmod 0775 /system/xbin/MPED    
 
-# NFC
-    mkdir /data/nfc_socket 0771 nfc radio
+    # NFC
+    #mkdir /data/nfc_socket 0771 nfc radio
+
+	#B: [VY36] JackBB 2016/1/6 ETSI102695-1 5.5.4.3 Test case 2
+	mkdir /data/nfc 0760 nfc system
+    #E: [VY36] JackBB 2016/1/6
+
+#copy status files from cache partition to internal sdcard at post-fs-data
+     exec u:r:fota-init:s0 -- /system/bin/sh /system/etc/post-fs-data-fota.sh
+
+# CEI comments start
+# Prevent swelling
+    chmod 0755 /sys/class/power_supply/battery/enable_llk
+# CEI comments end
 
 # -----------------------
 # Add by MTK
@@ -249,30 +324,17 @@ on post-fs-data
     chmod 0660 /sys/devices/platform/gsensor/driver/cpsrange
     chmod 0660 /sys/devices/platform/gsensor/driver/cpsbandwidth
 
+    chmod 0440 /sys/devices/soc/soc:gsensor@0/driver/pmrelax
+    chmod 0660 /sys/devices/soc/soc:gsensor@0/driver/tilt
+    chown system input /sys/devices/soc/soc:gsensor@0/driver/pmrelax
+    chown system input /sys/devices/soc/soc:gsensor@0/driver/tilt
+
     chown system system /dev/hwmsensor
     chown system system /dev/msensor
     chown system system /dev/gsensor
     chown radio system /dev/als_ps
     chown system system /dev/gyroscope
     chown system system /dev/aal_als
-
-#[AGOLD][START][WLG] 
-    chmod 0666 /dev/als_ps
-    chmod 0666 /dev/aw2013
-    chmod 0777 /dev/fpc1080
-    chmod 0777 /dev/halldev
-    chmod 0666 /dev/silead_fp_dev
-    chmod 0666 /dev/madev0
-    chmod 0777 /dev/esfp0
-	chmod 0777 /dev/iraf
-	chmod 0777 /dev/sn3191
-	chmod 0666 /sys/agold_laser/laser
-#[AGOLD][END]
-#[AGOLD][Fengjun][20121119] 
-	chmod 0666 /dev/AGOLD_DRIVER
-	chmod 0666 /sys/class/android_usb/android0/iSerial
-	chmod 0666 /sys/class/android_usb/android0/iProduct
-#[AGOLD]End
 
     chmod 0660 /sys/class/misc/m_acc_misc/accenablenodata
     chmod 0660 /sys/class/misc/m_acc_misc/accactive
@@ -348,30 +410,9 @@ on post-fs-data
     chown system system /sys/class/misc/m_baro_misc/barodelay
     chown system system /sys/class/misc/m_baro_misc/barobatch
     chown system system /sys/class/misc/m_baro_misc/baroflush
+	
 
-#[AGOLD][wangxing][20160201]
-	chmod 0660 /sys/class/misc/m_step_c_misc/step_cactive
-	chmod 0660 /sys/class/misc/m_step_c_misc/step_cdelay
-	chmod 0660 /sys/class/misc/m_step_c_misc/step_cbatch
-	chmod 0660 /sys/class/misc/m_step_c_misc/step_cflush
-	chmod 0660 /sys/class/misc/m_step_c_misc/step_cdevnum
-	chown system system /sys/class/misc/m_step_c_misc/step_cactive
-	chown system system /sys/class/misc/m_step_c_misc/step_cdelay
-	chown system system /sys/class/misc/m_step_c_misc/step_cbatch
-	chown system system /sys/class/misc/m_step_c_misc/step_cflush
-	chown system system /sys/class/misc/m_step_c_misc/step_cdevnum
-#[AGOLD][wangxing][20160201]
-
-#[AGOLD][xiaofulong][20160513]
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/chipinfo
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/led1duty
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/led2duty
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/led1en
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/led2en
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/ledmode
-	chmod 0664 /sys/bus/i2c/drivers/leds-LM3643/reg
-#[AGOLD][xiaofulong][20160513]
-
+	
     #Accdet
     chown root radio /sys/devices/platform/Accdet_Driver/driver/accdet_call_state
 
@@ -471,10 +512,10 @@ on post-fs-data
 
     chmod 0660 /d/disp
     chown system graphics /d/disp
-
+    
     chmod 0660 /d/dispsys
     chown system graphics /d/dispsys
-
+    
     # EM baseband file
     chown root diag /system/bin/baseband_regdump
     chmod 4750 /system/bin/baseband_regdump
@@ -559,13 +600,9 @@ on post-fs-data
     chmod 0660 /dev/kd_camera_flashlight
     chmod 0660 /dev/kd_camera_hw_bus2
     chmod 0660 /dev/FM50AF
-    chmod 0660 /dev/DW9714
     chmod 0660 /dev/CAM_CAL_DRV
-    chmod 0660 /dev/CAM_CAL_DRV1
-    chmod 0660 /dev/CAM_CAL_DRV2
-    chmod 0660 /dev/BRCB032GWZ_3
-    chmod 0660 /dev/CAM_CAL_GT24C64
-    chmod 0777 /dev/agold_lcm3d
+    chmod 0660 /dev/GT24C32A_CAL_DRV
+    chmod 0660 /dev/CAT24C16_CAL_DRV
 
     chown system camera /dev/camera-sysram
     chown system camera /dev/camera-isp
@@ -575,26 +612,10 @@ on post-fs-data
     chown system camera /dev/kd_camera_flashlight
     chown system camera /dev/kd_camera_hw_bus2
     chown system camera /dev/FM50AF
-    chown system camera /dev/DW9714
     chown system camera /dev/CAM_CAL_DRV
-    chown system camera /dev/CAM_CAL_DRV1
-    chown system camera /dev/CAM_CAL_DRV2
-    chown system camera /dev/BRCB032GWZ_3
-    chown system camera /dev/CAM_CAL_GT24C64
+    chown system camera /dev/GT24C32A_CAL_DRV
+    chown system camera /dev/CAT24C16_CAL_DRV
 
-#agold add start
-	chmod 0660 /dev/BU64291AF
-	chmod 0660 /dev/BU6429AF
-	chmod 0660 /dev/DW9800AF
-	chmod 0660 /dev/BU64297AF
-	chmod 0660 /dev/DW9763AF
-
-	chown system camera /dev/BU64291AF
-	chown system camera /dev/BU6429AF
-	chown system camera /dev/DW9800AF
-	chown system camera /dev/BU64297AF
-	chown system camera /dev/DW9763AF
-#agold add end
 
     #MATV
     chmod 0660 /dev/MATV
@@ -677,9 +698,9 @@ on post-fs-data
 
     chmod 0666 /dev/exm0
 
-	#Thermal
+	#Thermal	
 	mkdir /data/.tp/ 0775 system system
-
+	
 # End of adding by MTK drivers
 # -----------------------
 
@@ -717,6 +738,12 @@ on boot
     chmod 0770 /sys/power/tuxonice
     chmod 0220 /sys/power/tuxonice/do_hibernate
 
+
+
+# permissions for NFC
+		setprop ro.nfc.port "I2C"
+		chmod 0600 /dev/pn544
+		chown nfc nfc /dev/pn544
 
 # Smartbook Handler Framework
     chown system system /sys/power/sb_state
@@ -801,7 +828,7 @@ on boot
     chown bluetooth radio /dev/ttyGS2
     chmod 0660 /dev/ttyGS2
 
-on property:ro.board.platform=mt6755
+on property:ro.board.platform=mt6753
     chown system system /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
     write /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq 1300000
@@ -814,7 +841,6 @@ on property:vold.decrypt=trigger_restart_min_framework
     start start_modem
     start msensord
     start permission_check
-    start stp_dump
     write /proc/bootprof "trigger_restart_min_framework"
 
 on property:vold.decrypt=trigger_restart_framework
@@ -826,8 +852,6 @@ on property:vold.decrypt=trigger_restart_framework
 
 on property:vold.decrypt=trigger_shutdown_framework
     start stop_modem
-    start swapoff_action
-    stop stp_dump
     write /proc/bootprof "trigger_shutdown_framework"
 
 service stop_modem /system/bin/md_ctrl 0
@@ -842,15 +866,15 @@ service start_modem /system/bin/md_ctrl 1
 # Define TCP buffer sizes for various networks
 #   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.default 4096,87380,524288,4096,16384,524288
-    setprop net.tcp.buffersize.wifi    524288,1048576,2097152,262144,524288,1048576
-    setprop net.tcp.buffersize.lte     524288,1048576,2097152,262144,524288,1048576
-    setprop net.tcp.buffersize.umts    4094,87380,524288,4096,16384,524288
-    setprop net.tcp.buffersize.hspa    4094,87380,524288,4096,16384,524288
+    setprop net.tcp.buffersize.wifi    524288,2097152,4194304,262144,524288,1048576
+    setprop net.tcp.buffersize.lte     25600,640000,2560000,10480,262144,1048576
+    setprop net.tcp.buffersize.umts    8192,60500,242000,4096,32500,130000
+    setprop net.tcp.buffersize.hspa    12200,305150,1220608,10480,262144,1048576
     setprop net.tcp.buffersize.hsupa   4094,87380,524288,4096,16384,524288
-    setprop net.tcp.buffersize.hsdpa   4094,87380,524288,4096,16384,524288
-    setprop net.tcp.buffersize.hspap   4094,87380,1220608,4096,16384,1220608
+    setprop net.tcp.buffersize.hsdpa   12200,305150,1220608,4096,32500,130000
+    setprop net.tcp.buffersize.hspap   20970,524288,2097152,10480,262144,1048576
     setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
-    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+    setprop net.tcp.buffersize.gprs    8192,17250,11680,4096,6500,26000
 
     setprop persist.sys.strictmode.disable 1
 
@@ -859,9 +883,7 @@ on property:persist.uartconsole.enable=1
     write /proc/mtprintk 1
 
 # Update the second boot logo
-service bootlogoupdater /system/bin/boot_logo_updater
-    class core
-    oneshot
+# [Mark]Remove boot_logo_updater in init script because we do not need show kernel logo
 
 service mobile_log_d /system/bin/mobile_log_d
     class main
@@ -912,6 +934,19 @@ service nvram_daemon /system/bin/nvram_daemon
     user root
     group system
     oneshot
+
+service pl_nvram_write /system/bin/pl_nvram_write
+    class main
+    user root
+    oneshot
+
+#CEI comments start
+#Add NVRAM
+service nvram_write /system/bin/nvram_write
+    class main
+    user root
+    oneshot
+#CEI comments end
 
 service atci_service /system/bin/atci_service
     class core
@@ -965,6 +1000,37 @@ service pq /system/bin/pq
     user system
     group system graphics
 
+service aal /system/bin/aal
+    class main
+    user system
+    group system graphics
+
+# FOTA upgrade
+service rbfota /system/bin/fota1
+    class main
+    disabled
+    oneshot
+
+# Config file updater
+service ota-updater /system/bin/ota-config-updater.sh
+    class main
+    user system
+    group system
+    disabled
+    oneshot
+
+# set up symbolic links to proper configuration file
+service config-linker /system/bin/multi-cdf-symlinker.sh
+    class main
+    user system
+    group system
+    disabled
+    oneshot
+
+# Note! that there is a dependency towards taimport property
+# the property is set immediatly after execution of taimport.
+on property:init.taimport.ready=true
+    start config-linker
 
 service p2p_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
@@ -1112,10 +1178,7 @@ service DMAgent /system/bin/dm_agent_binder
     user system
     group system cache
 
-service PPLAgent /system/bin/ppl_agent
-    class main
-    user root
-    group system cache
+
 
 service vtservice /system/bin/vtservice
     class main
@@ -1137,11 +1200,6 @@ service enableswap /system/bin/sh /enableswap.sh
     class late_start
     oneshot
     seclabel u:r:enableswap:s0
-
-service swapoff_action /system/bin/sh /disableswap.sh
-    class main
-    disabled
-    oneshot
 
 service dbus /system/bin/dbus-daemon --system --nofork
     class main
@@ -1230,11 +1288,6 @@ service extmdlogger /system/bin/extmdlogger
     user shell
     group shell system radio sdcard_rw inet sdcard_r media_rw
 
-service GoogleOtaAgent /system/bin/GoogleOtaBinder
-    class main
-    user root
-    group root
-
 service mdlogger /system/bin/mdlogger
     class main
     user shell
@@ -1282,14 +1335,6 @@ service emdlogger6 /system/bin/emdlogger6
     disabled
     oneshot
 
-service md_monitor /system/bin/md_monitor
-    class main
-    user system
-    group system radio sdcard_rw inet sdcard_r media_rw
-
-#on property:ro.mtk_modem_monitor_support=1
-#start md_monitor
-
 #
 #sensor service (begin)
 #
@@ -1309,32 +1354,17 @@ service ami304d /system/bin/ami304d
     disabled
     class main
 
-#service memsicd /system/bin/memsicd
-#     disabled
-#    user system
-#    group system
-#    class main
+service memsicd /system/bin/memsicd
+     disabled
+    user system
+    group system
+    class main
 
 service memsicd3416x /system/bin/memsicd3416x
      disabled
 	 user system
     group system
     class main
-
-#AGold Bruce 2015.05.16
-service memsicd3524x /system/bin/memsicd3524x
-	 user system
-    group system
-    class main    
-#endif
-
-#AGold gengdong 2016.02.23
-service st480 /system/bin/st480
-	 user system
-    group system
-    class main  
-#endif
-   
 service akmd8975 /system/bin/akmd8975
     disabled
     user system
@@ -1368,12 +1398,11 @@ service mc6420d /system/bin/mc6420d
     user system
     group system
     class main
-service qmcX983d /system/bin/qmcX983d
+service qmc5983d /system/bin/qmc5983d
      disabled
 	 user system
     group system
     class main
-    oneshot
 
 service orientationd /system/bin/orientationd
     disabled
@@ -1447,7 +1476,7 @@ service thermalloadalgod /system/bin/thermalloadalgod
     user system
     group system
 
-
+	
 service thermal_manager /system/bin/thermal_manager
     class main
     user root
@@ -1468,11 +1497,13 @@ service fuelgauged /system/bin/fuelgauged
     user system
     group system
 
-service sn /system/bin/sn
-    class late_start
-    user system
-    group system sdcard_rw
-    oneshot
+#CEI Remove MTK sn service
+#service sn /system/bin/sn
+#    class late_start
+#    user system
+#    group system sdcard_rw
+#    oneshot
+#CEI Remove MTK sn service
 
 #add for power-off alarm
 service poad /system/bin/poad
@@ -1544,7 +1575,7 @@ chmod 777 /etc/ppp/ip-down-ppp0
 #
 
 #set the property of persiste.radio.reset_on_switch
-setprop persist.radio.reset_on_switch false
+setprop persist.radio.reset_on_switch true
 #end
 
 #set the property of rild.mark_switchuser
@@ -1606,57 +1637,16 @@ service program_binary /system/bin/program_binary_service
     group graphics
     oneshot
 
-
-# MBIMD Service
-service mbimd /system/bin/mbimd debug
+service yamaha537 /system/bin/yamaha537 
     disabled
-    oneshot
-
-on property:service.mbim.enable=0
-    stop mbimd
-
-on property:service.mbim.enable=1
-    start mbimd
-     
-#[AGOLD][spl][20120420] AGOLD_PROX_CALI_ENABLE
-service nvram_proximity /system/bin/nvram_proximity
-    user root
-    oneshot
-    disabled
-
-on property:init.svc.nvram_daemon=stopped
-    start nvram_proximity
-#[AGOLD][end]
-
-#[AGOLD][Fengjun][2015.04.14]For silead fingerprint
-# @ 2015 silead
-service fpsvcd /system/bin/fpsvcd 
-    user root
-    oneshot
-    disabled   
-
-on property:sys.silead.fpsvcd=start
-    start fpsvcd
-# @ 2015 silead
-
-#[AGOLD][GUOTUO][2016.02.01] add For fingerprint
-chmod 666 /dev/esfp0
-chmod 777 /system/bin/etsd
-
-service etsd /system/bin/etsd
-    class late_start
     user system
-
-service fingerprintd /system/bin/fingerprintd
-    class late_start
-    user system
-
-service gx_fpd /system/bin/gx_fpd
-    class late_start
-    user root
-    group root system
-#[AGOLD][GUOTUO][2016.02.01] end
-
-service ANvRAMAgent /system/bin/agoldnvram
+    group system input
     class main
-    user root
+
+# jonny E-Compass 2nd source
+# gmc303/gme60x Daemon(gmadfs) init
+service gmadfs /system/bin/gmadfs -m -2
+	disabled
+	class main
+	user system
+	group system

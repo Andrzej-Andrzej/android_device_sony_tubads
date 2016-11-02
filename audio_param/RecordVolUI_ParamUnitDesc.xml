@@ -22,7 +22,6 @@
 			<Category name="Handset"/>
 			<Category name="Headset" alias="3-pole HS,4-pole HS"/>
 			<Category name="HS5POLE" alias="5-pole HS"/>
-			<Category name="HS5POLE_ANC" alias="5-pole HS+ANC"/>
 			<Category name="BT earphone" alias="Bluetooth"/>
 		</CategoryType>
 	</CategoryTypeList>

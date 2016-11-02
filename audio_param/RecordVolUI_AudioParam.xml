@@ -10,17 +10,12 @@
     <Param path="SndRecNormal,HS5POLE" param_id="2"/>
     <Param path="SndRecLecture,HS5POLE" param_id="1"/>
     <Param path="SndRecMeeting,HS5POLE" param_id="1"/>
-    <Param path="SndRecNormal,HS5POLE_ANC" param_id="2"/>
-    <Param path="SndRecLecture,HS5POLE_ANC" param_id="1"/>
-    <Param path="SndRecMeeting,HS5POLE_ANC" param_id="1"/>
     <Param path="CamRecNormal,Handset" param_id="2"/>
     <Param path="CamRecMeeting,Handset" param_id="1"/>
     <Param path="CamRecNormal,Headset" param_id="2"/>
     <Param path="CamRecMeeting,Headset" param_id="1"/>
     <Param path="CamRecNormal,HS5POLE" param_id="2"/>
     <Param path="CamRecMeeting,HS5POLE" param_id="1"/>
-    <Param path="CamRecNormal,HS5POLE_ANC" param_id="2"/>
-    <Param path="CamRecMeeting,HS5POLE_ANC" param_id="1"/>
     <Param path="ASR" param_id="2"/>
     <Param path="VR" param_id="2"/>
     <Param path="VoiceUnLk" param_id="2"/>

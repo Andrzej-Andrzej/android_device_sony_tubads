@@ -3,14 +3,8 @@
   <ParamTree>
     <Param path="NB,Normal,GSM" param_id="0"/>
     <Param path="WB,Normal,GSM" param_id="0"/>
-    <Param path="NB,3_pole_Headset,GSM" param_id="1"/>
-    <Param path="WB,3_pole_Headset,GSM" param_id="1"/>
     <Param path="NB,4_pole_Headset,GSM" param_id="1"/>
     <Param path="WB,4_pole_Headset,GSM" param_id="1"/>
-    <Param path="NB,5_pole_Headset,GSM" param_id="1"/>
-    <Param path="WB,5_pole_Headset,GSM" param_id="1"/>
-    <Param path="NB,5_pole_Headset+ANC,GSM" param_id="1"/>
-    <Param path="WB,5_pole_Headset+ANC,GSM" param_id="1"/>
     <Param path="NB,Handsfree,GSM" param_id="1"/>
     <Param path="WB,Handsfree,GSM" param_id="1"/>
     <Param path="NB,BT_Earphone,GSM" param_id="2"/>

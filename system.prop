@@ -1,41 +1,104 @@
-# RIL
 rild.libpath=mtk-ril.so
 rild.libargs=-d /dev/ttyC0
-ril.specific.sm_cause=0
-ril.external.md
-ril.current.share_modem=2
-ril.flightmode.poweroffMD=1
-ril.telephony.mode=0
-ril.radiooff.poweroffMD=0
-ro.mtk_enable_md1=1
-ro.telephony.default_network=9
-persist.radio.default.sim=0
-persist.radio.multisim.config=dsds
-persist.radio.fd.counter=15
-persist.radio.fd.off.counter=5
-persist.radio.fd.r8.counter=15
-persist.radio.fd.off.r8.counter=5
 
-ro.telephony.ril_class=MT6755
 
-# Wifi
+# MTK, Infinity, 20090720 {
 wifi.interface=wlan0
-wifi.tethering.interface=ap
-wifi.direct.interface=p2p0
+# MTK, Infinity, 20090720 }
 
-# Graphics
+# MTK, mtk03034, 20101210 {
+ro.mediatek.wlan.wsc=1
+# MTK, mtk03034 20101210}
+# MTK, mtk03034, 20110318 {
+ro.mediatek.wlan.p2p=1
+# MTK, mtk03034 20110318}
+
+# MTK, mtk03034, 20101213 {
+mediatek.wlan.ctia=0
+# MTK, mtk03034 20101213}
+
+
+#
+wifi.tethering.interface=ap0
+#
+
 ro.opengles.version=196608
+#ro.kernel.qemu=1
+#ro.kernel.qemu.gles=0
+
+wifi.direct.interface=p2p0
+dalvik.vm.heapgrowthlimit=128m
+dalvik.vm.heapsize=256m
+
+# USB MTP WHQL
+ro.sys.usb.mtp.whql.enable=0
+
+# Power off opt in IPO
+sys.ipo.pwrdncap=2
+
+ro.sys.usb.storage.type=mtp,mass_storage
+
+# USB BICR function
+ro.sys.usb.bicr=yes
+
+# USB Charge only function
+ro.sys.usb.charging.only=yes
+
+# audio
+ro.camera.sound.forced=0
+ro.audio.silent=0
+
+ro.zygote.preload.enable=0
+
+# temporary enables NAV bar (soft keys)
+qemu.hw.mainkeys=0
+
+ro.kernel.zio=38,108,105,16
+#ro.kernel.qemu=1
+#ro.kernel.qemu.gles=0
+#ro.boot.selinux=disable
+
+# Disable dirty region for Mali
+debug.hwui.render_dirty_regions=false
+
 ro.sf.lcd_density=320
 
-# FRP
-ro.frp.pst=/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/frp
+# performance
+ro.mtk_perf_simple_start_win=1
+ro.mtk_perf_response_time=1
 
-# Memory trim
-ro.sys.fw.use_trim_settings=true
-ro.sys.fw.empty_app_percent=50
-ro.sys.fw.trim_empty_percent=100
-ro.sys.fw.trim_cache_percent=100
-ro.sys.fw.trim_enable_memory=1073741824
+# disable ipo for development
+sys.ipo.disable=1
+
+sony.support.effect=0x1FF
+# Default values/Locales for the hiding languages feature
+ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
+
+# audio parameter version
+persist.audio.gain.version=13.00_20160902_276J3015
+
+# BSP_Audio_S: B1317 20160316 , create a new olume curve for clear audio feature
+persist.audio.clear_audio_state=0
+
+ro.service.xrfm.supported=true
+persist.service.xrfm.mode=0
+persist.service.swiqi2.enable=0
+
+#S : Creeds - Update system.prop file for fw/hw version from Calla Project : {
+persist.nfc.cap.fwver=080126
+persist.nfc.cap.hwver=0005
+#E : Creeds - Update system.prop file for fw/hw version from Calla Project : }
+
+#S : Creeds - Update system.prop file for customer RIL feature requirement : {
+ro.nfc.se.sim.enable=true
+ro.nfc.se.smx.enable=false
+ro.nfc.icon.enable=false
+ro.nfc.on.default=true
+#E : Creeds - Update system.prop file for customer RIL feature requirement : }
+
+# Content Version
+ro.semc.content.number=PA3
+
 
 ro.config.max_starting_bg=3
 

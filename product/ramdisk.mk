@@ -16,4 +16,13 @@ PRODUCT_PACKAGES += \
     meta_init.modem.rc \
     meta_init.project.rc \
     meta_init.rc \
-    ueventd.mt6755.rc
+    ueventd.mt6755.rc \
+    fstab.fota \
+    init.common_svc.rc \
+    init.chiptest.rc \
+    init.epdg.rc \
+    init.mal.rc \
+    init.qns.rc \
+    init.volte.rc \
+    init.trustonic.rc \
+    init.wfca.rc

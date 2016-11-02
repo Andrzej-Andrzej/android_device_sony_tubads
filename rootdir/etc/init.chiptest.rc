@@ -1,0 +1,10 @@
+
+on property:persist.chiptest.enable=1
+    stop zygote_secondary
+    stop zygote
+    setprop sys.usb.config rndis,adb,acm
+
+
+on property:persist.chiptest.enable=0
+    start zygote
+    start zygote_secondary

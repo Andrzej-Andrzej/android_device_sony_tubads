@@ -20,8 +20,7 @@
 			<Category name="Handset"/>
 			<CategoryGroup name="Headset">
 				<Category name="4-pole HS" wording="4-pole headset"/>
-				<Category name="5-pole HS" wording="5-pole headset(ANC OFF)"/>
-				<Category name="5-pole HS+ANC" wording="5-pole headset(ANC ON)"/>
+				<Category name="5-pole HS" wording="5-pole headset"/>
 			</CategoryGroup>
 			<Category name="BT earphone" wording="Bluetooth"/>
 		</CategoryType>
