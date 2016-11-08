@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<!-- This is the standard feature indicating that the device includes microphone. -->
+<!-- Feature for devices with a proximity sensor. -->
 <permissions>
-    <feature name="android.hardware.microphone" />
+    <feature name="android.hardware.sensor.proximity" />
 </permissions>

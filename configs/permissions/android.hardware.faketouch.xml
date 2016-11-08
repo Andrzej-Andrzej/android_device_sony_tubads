@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 The Android Open Source Project
+<!-- Copyright (C) 2011 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
      limitations under the License.
 -->
 
-<!-- This is the standard feature indicating that the device includes microphone. -->
+<!-- This is the standard set of features for a devices that does not have
+     a touch screen, but does have some other indirect input device such as
+     a track pad. -->
 <permissions>
-    <feature name="android.hardware.microphone" />
+    <feature name="android.hardware.faketouch" />
 </permissions>

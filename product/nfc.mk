@@ -5,9 +5,12 @@ PRODUCT_PACKAGES += \
     Tag
     
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-nxp.conf \
     $(LOCAL_PATH)/configs/libnfc-brcm.conf:system/etc/libnfc-brcm.conf \
     $(LOCAL_PATH)/configs/libnfc-nxp.conf:system/etc/libnfc-nxp.conf \
     $(LOCAL_PATH)/configs/nfcee_access.xml:system/etc/nfcee_access.xml \
+    $(LOCAL_PATH)/configs/nfc/libpn547_fw.so:system/vendor/firmware/libpn547_fw.so \
+    $(LOCAL_PATH)/configs/nfc/param/route.xml:system/etc/param/route.xml \
     $(LOCAL_PATH)/prebuilt/NFC/lib/libnfc_nci_jni.so:system/lib/libnfc_nci_jni.so \
     $(LOCAL_PATH)/prebuilt/NFC/lib/libnfc_ndef.so:system/lib/libnfc_ndef.so \
     $(LOCAL_PATH)/prebuilt/NFC/lib/libnfc-nci.so:system/lib/libnfc-nci.so \

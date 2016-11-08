@@ -73,4 +73,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio_param/Volume_ParamUnitDesc.xml:system/etc/audio_param/Volume_ParamUnitDesc.xml \
     $(LOCAL_PATH)/audio/audio_policy.conf:system/etc/audio_policy.conf \
     $(LOCAL_PATH)/audio/audio_device.xml:system/etc/audio_device.xml \
-    $(LOCAL_PATH)/audio/audio_em.xml:system/etc/audio_em.xml
+    $(LOCAL_PATH)/audio/audio_em.xml:system/etc/audio_em.xml \
+    $(LOCAL_PATH)/audio/clearphase_sp_param.bin:system/etc/sony_effect/clearphase_sp_param.bin \
+    $(LOCAL_PATH)/audio/sforce_param_arm.bin:system/etc/sony_effect/sforce_param_arm.bin \
+    $(LOCAL_PATH)/audio/xloud_param_arm.bin:system/etc/sony_effect/xloud_param_arm.bin
