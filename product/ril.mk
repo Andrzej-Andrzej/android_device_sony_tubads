@@ -22,7 +22,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/RIL/lib64/librilmtkmd2.so:system/lib64/librilmtkmd2.so \
     $(LOCAL_PATH)/prebuilt/RIL/lib64/mtk-ril.so:system/lib64/mtk-ril.so \
     $(LOCAL_PATH)/prebuilt/RIL/lib64/mtk-rilmd2.so:system/lib64/mtk-rilmd2.so \
-    $(LOCAL_PATH)/prebuilt/RIL/mddb/DbgInfo_LR11.W1535.MD.MP_CCI6755_64_S10_M_MOLY_LR11_W1535_MD_MP_V41_T1_2016_09_20_00_40_1_ulwctg_n:system/etc/DbgInfo_LR11.W1535.MD.MP_CCI6755_64_S10_M_MOLY_LR11_W1535_MD_MP_V41_T1_2016_09_20_00_40_1_ulwctg_n \
-    $(LOCAL_PATH)/prebuilt/RIL/mddb/MDDB.META_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB:system/etc/MDDB.META_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB \
-    $(LOCAL_PATH)/prebuilt/RIL/mddb/MDDB_InfoCustomAppSrcP_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB:system/etc/MDDB_InfoCustomAppSrcP_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB \
-    $(LOCAL_PATH)/prebuilt/RIL/mddb/mdm_layout_desc_1_ulwctg_n.dat:system/etc/mdm_layout_desc_1_ulwctg_n.dat 
+    $(LOCAL_PATH)/prebuilt/RIL/mddb/DbgInfo_LR11.W1535.MD.MP_CCI6755_64_S10_M_MOLY_LR11_W1535_MD_MP_V41_T1_2016_09_20_00_40_1_ulwctg_n:system/etc/mddb/DbgInfo_LR11.W1535.MD.MP_CCI6755_64_S10_M_MOLY_LR11_W1535_MD_MP_V41_T1_2016_09_20_00_40_1_ulwctg_n \
+    $(LOCAL_PATH)/prebuilt/RIL/mddb/MDDB.META_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB:system/etc/mddb/MDDB.META_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB \
+    $(LOCAL_PATH)/prebuilt/RIL/mddb/MDDB_InfoCustomAppSrcP_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB:system/etc/mddb/MDDB_InfoCustomAppSrcP_MT6755_S00_MOLY_LR11_W1535_MD_MP_V41_T1_1_ulwctg_n.EDB \
+    $(LOCAL_PATH)/prebuilt/RIL/mddb/mdm_layout_desc_1_ulwctg_n.dat:system/etc/mddb/mdm_layout_desc_1_ulwctg_n.dat 

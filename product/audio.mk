@@ -7,7 +7,7 @@ PRODUCT_PACKAGES += \
     libaudio-resampler \
     libaudiopolicymanagerdefault \
     libtinycompress \
-    libtinyxml
+    libtinyxml 
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio_param/AudioParamOptions.xml:system/etc/audio_param/AudioParamOptions.xml \

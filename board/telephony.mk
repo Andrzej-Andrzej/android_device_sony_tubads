@@ -1,3 +1,3 @@
 # RIL
-BOARD_RIL_CLASS := ../../../device/sony/tubads/ril
+BOARD_RIL_CLASS := MT6755
 BOARD_CONNECTIVITY_MODULE := conn_soc
