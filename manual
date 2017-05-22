@@ -18,3 +18,9 @@ Write:
 . build/envsetup.sh && breakfast tubads
 mka otapackage
 Wait of finish, for me ~4hr
+
+How to make recovery: 
+
+source build/envsetup.sh
+lunch cm_tubads-eng
+make clean && make -j8 recoveryimage

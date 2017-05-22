@@ -53,5 +53,37 @@ TARGET_PROVIDES_INIT_RC := true
 # system.prop
 TARGET_SYSTEM_PROP := $(LOCAL_PATH)/system.prop
 
+# TWRP
+RECOVERY_VARIANT := twrp
+
 # Vold
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/soc/11270000.usb3/musb-hdrc/gadget/lun%d/file
+
+# recovery
+TARGET_RECOVERY_FSTAB := device/sony/tubads/recovery/twrp.fstab
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := /sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness
+BOARD_HAS_LARGE_FILESYSTEM := true
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+
+# TWRP
+RECOVERY_VARIANT := twrp
+
+# TWRP flags
+DEVICE_RESOLUTION := 720x1280
+TW_BRIGHTNESS_PATH := /sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness/
+TW_MAX_BRIGHTNESS := 255
+RECOVERY_GRAPHICS_USE_LINELENGTH := true
+BOARD_HAS_LARGE_FILESYSTEM := true
+TW_INCLUDE_CRYPTO := true
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
+TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "Micro SDCard"
+TW_DEFAULT_EXTERNAL_STORAGE := true
+TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
+RECOVERY_SDCARD_ON_DATA := true
+TW_INTERNAL_STORAGE_PATH := "/data/media"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+TW_EXTRA_LANGUAGES := true
+
+
